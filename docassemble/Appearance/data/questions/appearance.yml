@@ -7,10 +7,9 @@ metadata:
   title: Appearance
   short title: Appearance
   comment: This program helps you tell the court and the other parties that you are participating in a court case.
-#---
-#removed 8/20/21 since it has been added to ILAO framework
-#features:
-#  css: ilao_docs_table.css
+  #added to test new name in banner
+  logo: |
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Muli"><img src="/packagestatic/docassemble.ILAO/logo1.png" class="ilao_icon" alt="ILAO Icon"><h5 style="display:inline; font-family: 'Muli'; margin:10px;font-size:20px;color:#fff";font-weight:500>Appearance</h5>
 ---
 objects:
   - users: ALPeopleList.using(there_are_any=True)
@@ -41,8 +40,9 @@ code: |
   set_progress(5)
   instructions
   whats_next
-  if accept == False:
-    not_legal_advice
+  accept_terms
+  #if accept == False:
+    #not_legal_advice
   nav.set_section('review_answers')
   set_progress(15)
   lawsuit_information
@@ -78,9 +78,9 @@ code: |
 
   set_progress(100)
   get_docs_screen
-  users[0].delivery_email
-  if email_sent_ok == True:
-    ending_screen
+  #users[0].delivery_email
+  #if email_sent_ok == True:
+    #ending_screen
   ending_screen
 ---
 id: welcome
@@ -107,11 +107,17 @@ subquestion: |
 
   You can find this information on other court papers you have about this case. 
 
-  Set aside :stopwatch: 5 to 10 minutes to finish this program. You can login and save your work to return to later. 
+  Set aside 5 to 10 minutes to finish this program. You can login and save your work to return to later. 
+ 
+  ${ collapse_template(help_example) }  
 
-  Click on **{green words :question-circle:}** to learn what they mean. Click **Help** to learn more about a question.
-help: |
-  This is an example help page. Click **Back to question** to go to the previous screen and continue the interview.
+  Click on **{green words :question-circle:}** to learn what they mean.
+---
+template: help_example
+subject: |
+  **You can expand sections like this to show more information.**
+content: |  
+  This is an example of help. Click again to hide.
 ---
 id: whats next
 continue button field: whats_next
@@ -124,17 +130,33 @@ subquestion: |
 ---
 id: accept terms
 question: |
-  Not legal advice
+  Terms of use
 subquestion: |
-  NOTE: This program does not provide legal advice. It does not take the place of advice from a lawyer.
+  This program does not provide legal advice. It does not take the place of advice from a lawyer.
 
   Using this program does not create an attorney-client relationship between you and Illinois Legal Aid Online or its employees.
 
-  Do you understand and accept the [terms of use](https://www.illinoislegalaid.org/about/terms-of-use)? 
-field: accept
-choices:
-  - I understand and accept the terms of use.: True
-  - I do not accept the terms of use.: False
+  ${ collapse_template(get_legal_help) }  
+
+fields:
+  - To continue, you must accept the [terms of use](https://www.illinoislegalaid.org/about/terms-of-use).: accept
+    datatype: checkboxes
+    none of the above: False
+    minlength: 1
+    choices:
+      - I accept the terms of use.
+    validation messages:
+      minlength: |
+        You cannot continue unless you agree to the terms of use. 
+continue button field: accept_terms
+---
+template: get_legal_help
+subject: |
+  **What if I need legal advice?**
+content: |  
+  If you have questions or concerns about your legal problem and want legal advice you should talk to a lawyer.
+  
+  Use [Get Legal Help](https://www.illinoislegalaid.org/get-legal-help) to find free or low-cost legal services in your area.
 ---
 id: not legal advice
 event: not_legal_advice
@@ -162,12 +184,15 @@ subquestion: |
   
   Learn more about [Responding to a lawsuit](https://www.illinoislegalaid.org/node/32236).
   
+  ${ collapse_template(started_lawsuit_help) }  
+  
     If you would like help finding free or low-cost legal services in your area, use [Get Legal Help](https://www.illinoislegalaid.org/get-legal-help).
-help:
-  label: |
-    What if I started the lawsuit?
-  content: |
-    You can also file an Appearance if you started the lawsuit. Usually, you only need to file an Appearance if you had a lawyer in the case before, but now you want to represent yourself.
+---
+template: started_lawsuit_help
+subject: |
+  **What if I started the lawsuit?**
+content: |  
+  You can also file an Appearance if you started the lawsuit. Usually, you only need to file an Appearance if you had a lawyer in the case before, but now you want to represent yourself.
 ---
 id: any other users
 question: |
@@ -180,11 +205,14 @@ subquestion: |
   % if len(users.elements) > 1:  
   So far you have told us about ${comma_and_list(users.complete_elements())}.
   % endif  
-yesno: users.there_is_another 
-help: 
-  label: |
-    How do I know?
-  content: |
+fields:
+  - "Anyone else?": users.there_is_another
+    datatype: yesnoradio
+---
+template: other_parties_help
+subject: |
+  **How do I know if there are others?**
+content: |  
     % if user_ask_role == 'plaintiff':
     You said you are the **Plaintiff** or the **Petitioner.** The other people on your side of the case would be co-plaintiffs or co-petitioners.
     % else:
@@ -212,15 +240,17 @@ fields:
 id: any other opposing parties
 question: |
   % if users==plaintiffs:
-  Is there another **defendant** or **respondent** in this matter?
+  Is there another **defendant** or **respondent** in this case?
   % else:
-  Is there another **plaintiff** or **petitioner** in this matter?
+  Is there another **plaintiff** or **petitioner** in this case?
   % endif
 subquestion: |
   % if len(other_parties.elements) >= 1:  
   So far you have told us about ${comma_and_list(other_parties.complete_elements())}.
   % endif
-yesno: other_parties.there_is_another  
+fields:
+  - "Anyone else?": other_parties.there_is_another
+    datatype: yesnoradio
 ---
 depends on:
   - user_started_case
@@ -229,9 +259,9 @@ sets:
 id: names of opposing parties
 question: |
   % if users==plaintiffs:
-  Name of ${ ordinal(i) } **defendant** or **respondent** in this matter
+  Name of ${ ordinal(i) } **defendant** or **respondent** in this case
   % else:
-  Name of ${ ordinal(i) } **plaintiff** or **petitioner** in this matter
+  Name of ${ ordinal(i) } **plaintiff** or **petitioner** in this case
   % endif
 fields:
   - code: |
@@ -261,8 +291,22 @@ code: |
 id: case number
 question: |
   What is the case number?
+subquestion: |
+  ${ collapse_template(case_number_help) }  
 fields:
   - Case number: case_number
+---
+template: case_number_help
+subject: |
+  **Where can I find this?**
+content: |  
+  The case number should be on your court papers. Look at the Complaint or Petition, or the Summons if you received one. It is usually in the top-right part of the first page.
+  
+  If you started the case, the court clerk should have given you the case number.
+  
+  In this example, the case number is **2022 EXAMPLE 123**.
+  
+  [FILE case_number_example.png, 100%, Summons form showing case number]
 ---
 id: trial by jury
 question: |
@@ -286,7 +330,9 @@ question: |
   Do you want to receive information about this case by email?
 subquestion: |
   If you have an email address, you must list it so the court and other parties can contact you about this case.
-yesno: users[0].email_notice
+fields:
+  - "Case information by email?": users[0].email_notice
+    datatype: yesnoradio
 ---
 id: email address
 question: |
@@ -301,7 +347,9 @@ question: |
   Do you want to add your e-signature to your ${ form_name }?
 subquestion: |
   If you do not add your e-signature, you can sign your paper form later.
-yesno: e_signature
+fields:
+  - "Add e-signature?": e_signature
+    datatype: yesnoradio
 ---
 #depends on:
 #  - users
@@ -404,6 +452,9 @@ question: |
   % else:
   How will you send your ${ form_name } to ${ users[i] }?
   % endif
+subquestion: |  
+
+  ${ collapse_template(efiling_help) }  
 fields:
   - Hand delivery: users[i].hand_delivery
     datatype: yesnowide
@@ -428,6 +479,8 @@ fields:
     required: False
   - E-filing system: users[i].efm_delivery
     datatype: yesnowide
+    help: |
+      The court's e-filing system could be an electronic filing manager (EFM) or an approved electronic filing service provider (EFSP).
   - Email: users[i].email_delivery
     datatype: yesnowide
   - Email address: users[i].delivery_email
@@ -443,11 +496,12 @@ fields:
       variable: users[i].jail_delivery
       is: True
     required: False
-help: 
-  label: |
-    What is the e-filing system?
-  content: |
-    The court's e-filing system could be an electronic filing manager (EFM) or an approved electronic filing service provider (EFSP).
+---
+template: efiling_help
+subject: |
+  **What is the e-filing system?**
+content: |  
+  The court's e-filing system could be an electronic filing manager (EFM) or an approved electronic filing service provider (EFSP).
 ---
 id: other party delivery method
 # generic object: ALIndividual
@@ -458,6 +512,9 @@ question: |
   % else:
   How will you send your ${ form_name } to ${ other_parties[i] }?
   % endif
+subquestion: |  
+
+  ${ collapse_template(efiling_help) }  
 fields:
   - Hand delivery: other_parties[i].hand_delivery
     datatype: yesnowide
@@ -497,11 +554,6 @@ fields:
       variable: other_parties[i].jail_delivery
       is: True
     required: False
-help: 
-  label: |
-    What is the e-filing system?
-  content: |
-    The court's e-filing system could be an electronic filing manager (EFM) or an approved electronic filing service provider (EFSP).
 ---
 id: delivery time
 generic object: ALIndividual
@@ -523,10 +575,10 @@ fields:
       - AM: True
       - PM: False
 ---
-reconsider: 
-  - illinois_appearance_attachment["final"]
-  - illinois_appearance_additional["final"]
-  - illinois_appearance_additional_2["final"]
+#reconsider: 
+#  - illinois_appearance_attachment["final"]
+#  - illinois_appearance_additional["final"]
+#  - illinois_appearance_additional_2["final"]
 id: get docs screen
 question: |
   Download
@@ -540,16 +592,21 @@ subquestion: |
   
   ${ al_user_bundle.download_list_html() }
 
-#css: ${ docs_list_css() }
-field: get_docs_screen
-buttons:
-  - ${fa_icon("envelope", color="#0079d0", size="sm")} Email your forms: continue
+  &nbsp;
+
+  ${ al_user_bundle.send_button_html(show_editable_checkbox=False) }
+
+  **Note:** This program does not file your Appearance with the court or deliver it to other parties in your case.
+  
+  Thank you for using ILAO Easy Forms!
+event: get_docs_screen
 under: |
   % if not user_logged_in():
   [${fa_icon("sign-in-alt", color="#0079d0", size="sm")} Sign-in](${url_of('login', next=interview_url())}) or [register](${url_of('register', next=interview_url())}) an ILAO Easy Form account to save your progress (optional).
   % endif 
 
-  ${ action_button_html(interview_url(i="docassemble.ILAO:feedback.yml", easy_form_interview=ilao_easy_form_url, easy_form_title=ilao_easy_form_title, easy_form_page=user_info().question_id, easy_form_variable=user_info().variable, local=False,reset=1), label=':comment: Was this program helpful?', color='info', size="md", new_window=True) }
+  &nbsp;
+  ${ action_button_html(interview_url(i="docassemble.ILAO:feedback.yml", easy_form_interview=ilao_easy_form_url, easy_form_title=ilao_easy_form_title, easy_form_page=user_info().question_id, easy_form_variable=user_info().variable, local=False,reset=1), label=':comment: Was this program helpful?', color="#181c36", size="md", new_window=True) }
 ---
 id: email forms
 question: |
@@ -573,38 +630,81 @@ content: |
   
   [Illinois Legal Aid Online](https://www.illinoislegalaid.org)
 ---
-reconsider: 
-  - illinois_appearance_attachment["final"]
-  - illinois_appearance_additional["final"]
-  - illinois_appearance_additional_2["final"]
-code: |
-  if delivery_parties.number() < 4:
-    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
-  elif delivery_parties.number() < 7:
-    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
-  elif delivery_parties.number() < 10:
-    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_additional_2["final"], illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
-  else:
-    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_additional_blank["final"], illinois_appearance_additional_2["final"], illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ]) 
+generic object: ALDocumentBundle
+template: x.send_email_template
+subject: |
+  Appearance forms
+content: |
+  Your forms are attached.
+  
+  Thanks for using ILAO Easy Forms!
+  
+  [Illinois Legal Aid Online](https://www.illinoislegalaid.org)
 ---
-id: email ending screen
+# this is the old code - replaced by aldocument_bundle version below
+#removing this code b/c it is replaced by al_document_bundle attachments/email sent
+#reconsider: 
+#  - illinois_appearance_attachment["final"]
+#  - illinois_appearance_additional["final"]
+#  - illinois_appearance_additional_2["final"]
+#code: |
+#  if delivery_parties.number() < 4:
+#    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
+#  elif delivery_parties.number() < 7:
+#    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
+#  elif delivery_parties.number() < 10:
+#    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_additional_2["final"], illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
+#  else:
+#    email_sent_ok = send_email(to=users[0].delivery_email, template=forms_email, attachments=[ illinois_appearance_additional_blank["final"], illinois_appearance_additional_2["final"], illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ]) 
+#---
+# Testing new email attachment code
+#reconsider: 
+#  - illinois_appearance_attachment["final"]
+#  - illinois_appearance_additional["final"]
+#  - illinois_appearance_additional_2["final"]
+# This is copied from AL
+#generic object: ALDocumentBundle
+#event: x.send_email_action_event
+#code: |
+#
+#  if delivery_parties.number() < 4:
+#    email_success = x.send_email(to=action_argument('email'), template=forms_email, attachments=[ illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
+#  elif delivery_parties.number() < 7:
+#    email_success = x.send_email(to=action_argument('email'), template=forms_email, attachments=[ illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
+#  elif delivery_parties.number() < 10:
+#    email_success = x.send_email(to=action_argument('email'), template=forms_email, attachments=[ illinois_appearance_additional_2["final"], illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
+#  else:
+#    email_success = x.send_email(to=action_argument('email'), template=forms_email, attachments=[ illinois_appearance_additional_blank["final"], illinois_appearance_additional_2["final"], illinois_appearance_additional["final"], illinois_appearance_attachment["final"], illinois_appearance_instructions["final"] ])
+#    
+#  if email_success:
+#    # Exact phrase below is in Docassemble's words dictionary
+#    log(word('Email was sent to') + ' ' + action_argument('email') ,'success')
+#  else:
+#    # E-mail failed is not in the default Docassemble words dictionary
+#    log(word('E-mail failed'), 'error')
+---
+id: ending screen
 event: ending_screen
 question: |
-  Email sent
+  All done
 subquestion: |
-  Your forms were sent to **${ users[0].delivery_email }**.
-  
-  If you don’t see an email from no-reply@illinoislegalaid.org, check your spam folder.
+  Thank you for using ILAO Easy Forms!
   
   This program does not file your Appearance with the court or deliver it to other parties in your case. You will need to do this yourself.
+#buttons:
+#  - Delete answers and restart: restart
+#  - Exit: exit
+under: |
+  % if not user_logged_in():
+  [${fa_icon("sign-in-alt", color="#0079d0", size="sm")} Sign-in](${url_of('login', next=interview_url())}) or [register](${url_of('register', next=interview_url())}) an ILAO Easy Form account to save your progress (optional).
+  % endif 
+
+  &nbsp;
   
-  Thank you for using ILAO Easy Forms!
-buttons:
-  - Delete answers and restart: restart
-  - Exit: exit
+  ${ action_button_html(interview_url(i="docassemble.ILAO:feedback.yml", easy_form_interview=ilao_easy_form_url, easy_form_title=ilao_easy_form_title, easy_form_page=user_info().question_id, easy_form_variable=user_info().variable, local=False,reset=1), label=':comment: Was this program helpful?', color="#181c36", size="md", new_window=True) }
 ---
 objects:
-  - illinois_appearance_attachment: ALDocument.using(title="Appearance", filename="appearance_acrobat_pro_edited.pdf", has_addendum=False)
+  - illinois_appearance_attachment: ALDocument.using(title="Appearance", filename="appearance.pdf", has_addendum=False)
   - illinois_appearance_instructions: ALDocument.using(title="Instructions", filename="instructions.pdf", has_addendum=False)
   - illinois_appearance_additional: ALDocument.using(title="Additional Proof of Delivery", filename="appearance_additional_proof_delivery.pdf", has_addendum=False)
   - illinois_appearance_additional_2: ALDocument.using(title="Additional Proof of Delivery 2", filename="appearance_additional_proof_delivery_2.pdf", has_addendum=False)
@@ -637,8 +737,15 @@ code: |
     illinois_appearance_additional_blank.enabled = True
 ---
 objects:
-  - al_user_bundle: ALDocumentBundle.using(elements=[illinois_appearance_instructions, illinois_appearance_attachment, illinois_appearance_additional, illinois_appearance_additional_2, illinois_appearance_additional_blank], filename="illinois_appearance.pdf", title="All forms to download")
-  - al_court_bundle: ALDocumentBundle.using(elements=[illinois_appearance_attachment, illinois_appearance_additional, illinois_appearance_additional_2], filename="illinois_appearance.pdf", title="Appearance")
+  - al_user_bundle: ALDocumentBundle.using(elements=[illinois_appearance_instructions, illinois_appearance_single_pdf_bundle, illinois_appearance_additional_blank], filename="appearance.pdf", title="Download all forms")
+  - al_court_bundle: ALDocumentBundle.using(elements=[illinois_appearance_single_pdf_bundle], filename="appearance.pdf", title="Appearance")
+#---
+#objects:
+#  - al_user_bundle: ALDocumentBundle.using(elements=[illinois_appearance_instructions, illinois_appearance_attachment, illinois_appearance_additional, illinois_appearance_additional_2, illinois_appearance_additional_blank], filename="illinois_appearance.pdf", title="Download all forms")
+#  - al_court_bundle: ALDocumentBundle.using(elements=[illinois_appearance_attachment, illinois_appearance_additional, illinois_appearance_additional_2], filename="illinois_appearance.pdf", title="Appearance")
+---
+objects:
+  - illinois_appearance_single_pdf_bundle: ALDocumentBundle.using(elements=[illinois_appearance_attachment, illinois_appearance_additional, illinois_appearance_additional_2], filename="appearance.pdf", title="Appearance", enabled=True)
 #---
 #objects:
 #  - illinois_appearance_instructions[i]: DAStaticFile.using(filename="appearance_instructions.pdf")
@@ -1079,8 +1186,8 @@ question: |
   Edit the ${ user_ask_role }s
 subquestion: |
   ${ users.table }
-#
-#  ${ users.add_action() }
+
+  ${ users.add_action() }
 ---
 table: users.table
 rows: users
@@ -1103,8 +1210,8 @@ question: |
   % endif
 subquestion: |
   ${ other_parties.table }
-#
-#  ${ other_parties.add_action() }
+
+  ${ other_parties.add_action() }
 ---
 table: other_parties.table
 rows: other_parties
