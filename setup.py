@@ -44,7 +44,7 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
     return out
 
 setup(name='docassemble.Appearance',
-      version='1.3.10',
+      version='1.3.11',
       description=('Appearance'),
       long_description='# docassemble.Appearance\r\n\r\nAppearance\r\n\r\n## Author\r\n\r\nMatt Newsted, mnewsted@illinoislegalaid.org\r\n\r\n',
       long_description_content_type='text/markdown',
@@ -53,7 +53,7 @@ setup(name='docassemble.Appearance',
       license='The MIT License (MIT)',
       url='https://www.illinoislegalaid.org',
       packages=find_namespace_packages(),
-      install_requires=['docassemble.AssemblyLine>=3.2.0', 'docassemble.ILAO>=1.0.99'],
+      install_requires=['docassemble.AssemblyLine @ git+https://github.com/SuffolkLITLab/docassemble-AssemblyLine.git@main', 'docassemble.ILAO>=1.1.10'],
       zip_safe=False,
       package_data=find_package_data(where='docassemble/Appearance/', package='docassemble.Appearance'),
      )
