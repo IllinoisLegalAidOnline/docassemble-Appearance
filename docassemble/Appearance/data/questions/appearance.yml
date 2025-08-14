@@ -917,7 +917,7 @@ question: |
 subquestion: |
   **Don't forget!** Make sure you review and complete the Proof of Delivery section of your forms. 
   
-  [FILE proof_of_delivery_snip_2024.png, 100%, Proof of Delivery section of forms]
+  [FILE proof_of_delivery_snip_2025.png, 100%, Proof of Delivery section of forms]
 
   **Instructions when delivering your forms by hand:**
 
@@ -940,7 +940,7 @@ event: get_docs_screen
 question: |
   Download
 subquestion: |
-  Your forms are ready. View and download your forms below. Click **Make changes** to fix any mistakes.
+  Your forms are ready. View and download your forms below. Click **:edit: Make changes** to fix any mistakes.
 
   This program **does not file** your forms with the court or deliver them to other parties in your case. You will need to do this yourself. Learn about [**e-filing in Illinois**](https://www.illinoiscourts.gov/eservices/information-for-filers-without-lawyers).
 
@@ -1123,7 +1123,7 @@ attachment:
       - "document_name": ${"Appearance"}
       - "delivery_party1_name_full": | 
           % if delivery_parties[0].is_represented:
-          ${ delivery_parties[0].lawyer.name_full() }, (lawyer for ${ delivery_parties[0].name_full() })
+          ${ delivery_parties[0].lawyer.name_full() } (lawyer for ${ delivery_parties[0].name_full() })
           % else:
           ${ delivery_parties[0].name_full() }
           % endif
@@ -1166,7 +1166,7 @@ attachment:
 
       - "delivery_party2_name_full": | 
           % if delivery_parties[1].is_represented:
-          ${ delivery_parties[1].lawyer.name_full() }, (lawyer for ${ delivery_parties[1].name_full() })
+          ${ delivery_parties[1].lawyer.name_full() } (lawyer for ${ delivery_parties[1].name_full() })
           % else:
           ${ delivery_parties[1].name_full() }
           % endif
@@ -1226,7 +1226,7 @@ attachment:
 
       - "delivery_party1_name_full": | 
           % if x.is_represented:
-          ${ x.lawyer.name_full() }, (lawyer for ${ x.name_full() })
+          ${ x.lawyer.name_full() } (lawyer for ${ x.name_full() })
           % else:
           ${ x.name_full() }
           % endif
@@ -1270,7 +1270,7 @@ attachment:
 
       - "delivery_party2_name_full": | 
           % if x.second_person.is_represented:
-          ${ x.second_person.lawyer.name_full() }, (lawyer for ${ x.second_person.name_full() })
+          ${ x.second_person.lawyer.name_full() } (lawyer for ${ x.second_person.name_full() })
           % else:
           ${ x.second_person.name_full() }
           % endif
@@ -1375,7 +1375,7 @@ attachment:
       - "document_name": ${"Jury Request"}
       - "delivery_party1_name_full": | 
           % if delivery_parties[0].is_represented:
-          ${ delivery_parties[0].lawyer.name_full() }, (lawyer for ${ delivery_parties[0].name_full() })
+          ${ delivery_parties[0].lawyer.name_full() } (lawyer for ${ delivery_parties[0].name_full() })
           % else:
           ${ delivery_parties[0].name_full() }
           % endif
@@ -1418,7 +1418,7 @@ attachment:
 
       - "delivery_party2_name_full": | 
           % if delivery_parties[1].is_represented:
-          ${ delivery_parties[1].lawyer.name_full() }, (lawyer for ${ delivery_parties[1].name_full() })
+          ${ delivery_parties[1].lawyer.name_full() } (lawyer for ${ delivery_parties[1].name_full() })
           % else:
           ${ delivery_parties[1].name_full() }
           % endif
