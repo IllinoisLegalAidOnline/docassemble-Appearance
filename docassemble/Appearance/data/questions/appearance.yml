@@ -59,15 +59,14 @@ code: |
   other_parties.gather()
   if in_re_check == True:
     in_re_label
-  set_progress(40)
   trial_court
+  set_progress(45)
   case_number
   trial_with
-
-  set_progress(60)
+  
   nav.set_section('section_delivery')
   delivery_intro
-  set_progress(70)
+  set_progress(60)
   for person in delivery_parties:
     if person.is_represented:
       person.lawyer.name.first
