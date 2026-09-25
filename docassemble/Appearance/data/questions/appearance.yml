@@ -59,7 +59,7 @@ code: |
   other_parties.gather()
   if in_re_check == True:
     in_re_label
-  filing_county
+  case_county
   set_progress(45)
   case_number
   trial_with
@@ -349,7 +349,7 @@ question: |
 subquestion: |
   This should be listed near the top on your court papers.
 fields:
-  - County: filing_county
+  - County: case_county
     code: |
       il_county_list
 ---
@@ -1029,7 +1029,7 @@ attachment:
   editable: False
   pdf template file: appearance.pdf
   fields:
-      - "trial_court_county": ${ filing_county }
+      - "trial_court_county": ${ case_county }
       - "plaintiffs": |
           % if in_re_check:
           ${ in_re_label }
@@ -1161,7 +1161,7 @@ attachment:
   editable: False
   pdf template file: additional_proof_of_delivery.pdf
   fields:
-      - "trial_court_county": ${ filing_county }
+      - "trial_court_county": ${ case_county }
       - "plaintiffs": |
           % if in_re_check:
           ${ in_re_label }
@@ -1268,7 +1268,7 @@ attachment:
   editable: False
   pdf template file: jury_request.pdf
   fields:
-      - "trial_court_county": ${ filing_county }
+      - "trial_court_county": ${ case_county }
       - "plaintiffs": |
           % if in_re_check:
           ${ in_re_label }
@@ -1420,10 +1420,10 @@ review:
 #      - trial_court_index
 #      - recompute:
 #        - trial_court
-  - Edit: filing_county
+  - Edit: case_county
     button: |
       **County where this case is filed:**
-      ${ filing_county }
+      ${ case_county }
   - Edit: case_number
     button: |
       **Case number:**
@@ -1673,10 +1673,10 @@ review:
 #      - trial_court_index
 #      - recompute:
 #        - trial_court
-  - Edit: filing_county
+  - Edit: case_county
     button: |
       **County where this case is filed:**
-      ${ filing_county }
+      ${ case_county }
   - Edit: case_number
     button: |
       **Case number:**

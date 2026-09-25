@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docassemble.Appearance"
-version = "1.4.5"
+version = "1.4.6"
 description = "Appearance"
 readme = "README.md"
 authors = [
