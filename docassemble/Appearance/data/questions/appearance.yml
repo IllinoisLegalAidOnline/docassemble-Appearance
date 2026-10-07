@@ -140,7 +140,6 @@ subquestion: |
   If you plan to e-file your **{Appearance}**, you can use our [**Appearance with e-filing**](  https://www.illinoislegalaid.org/legal-information/appearance-e-filing) program.
   
   **Note:** You must also file a Fee waiver at the same time to use the ILAO e-filing program.
-
 ---
 id: instructions
 continue button field: how_to_use
@@ -703,10 +702,11 @@ template: efiling_help
 subject: |
   **What if I need help sending my forms electronically?**
 content: |  
-  If you need help delivering by email or using the e-filing system, you can visit a [**Legal Self-Help Center**](https://www.illinoislegalaid.org/get-legal-help/lshc-directory) or you can call, chat, or text a Court Guide at [**Illinois Court Help**](https://www.ilcourthelp.gov) or 833-411-1121.
----
-# other party delivery method was here
+  If you need help delivering by email or using the e-filing system, you can visit a [**Legal Self-Help Center :external-link:**](https://www.illinoislegalaid.org/get-legal-help/lshc-directory). You can also contact Illinois Court Help:
 
+  * **[Visit the Illinois Court Help website :external-link:](https://www.ilcourthelp.gov/)**,
+  * <a href="tel:833-411-1121">**Call (833) 411-1121 :phone:**</a>, or
+  * <a href="sms:833-411-1121">**Text (833) 411-1121 :comment:**</a>.
 ---
 id: all party delivery method
 sets:
