@@ -19,7 +19,7 @@ objects:
   - other_parties[i].jail_delivery_address: ALAddress
   - delivery_parties: ALPeopleList.using(there_are_any=True)
   - delivery_parties[i].lawyer: ALIndividual
-  - court_list: ALCourtLoader.using(file_name='docassemble.ILAO:data/sources/il_courts.xlsx')
+#  - court_list: ALCourtLoader.using(file_name='docassemble.ILAO:data/sources/il_courts.xlsx')
 ---
 code: |
   al_form_type = 'existing_case'
@@ -59,7 +59,7 @@ code: |
   other_parties.gather()
   if in_re_check == True:
     in_re_label
-  trial_court
+  case_county
   set_progress(45)
   case_number
   trial_with
@@ -140,7 +140,6 @@ subquestion: |
   If you plan to e-file your **{Appearance}**, you can use our [**Appearance with e-filing**](  https://www.illinoislegalaid.org/legal-information/appearance-e-filing) program.
   
   **Note:** You must also file a Fee waiver at the same time to use the ILAO e-filing program.
-
 ---
 id: instructions
 continue button field: how_to_use
@@ -349,29 +348,33 @@ question: |
 subquestion: |
   This should be listed near the top on your court papers.
 fields:
-  - County: trial_court_index
-    datatype: integer
+  - County: case_county
     code: |
-      court_county_lookup()
+      il_county_list
 ---
-code: |
-  def court_county_lookup(lowercase=False):
-    all_court_counties = court_list._load_courts()['address_county'].items()
-    filtered_courts = [(-1, "cook")] if lowercase else [(-1, "Cook")]
-    for court in all_court_counties:
-      if court[1] != "Cook":
-        court_name = court[1].lower() if lowercase else court[1]
-        filtered_courts.append((court[0],court_name))
-    return sorted( filtered_courts, key=lambda y: y[1])
----
-depends on:
-  - trial_court_index
-code: |
-  if trial_court_index == -1:
-    trial_court = court_list.as_court('trial_court', 15)
-    trial_court.address.county = "Cook"
-  else:
-    trial_court = court_list.as_court('trial_court', trial_court_index)
+#code: |
+#  def court_county_lookup(lowercase=False):
+#    all_court_counties = court_list._load_courts()['address_county'].items()
+#    filtered_courts = [(-1, "cook"), (-2, "kane")] if lowercase else [(-1, "Cook"), (-2, "Kane")]
+#    for court in all_court_counties:
+#      if court[1] != "Cook" and court[1] != "Kane":
+#        court_name = court[1].lower() if lowercase else court[1]
+#        filtered_courts.append((court[0],court_name))
+#    return sorted( filtered_courts, key=lambda y: y[1])
+#---
+#depends on:
+#  - trial_court_index
+#code: |
+#  if trial_court_index == -1:
+#    trial_court = court_list.as_court('trial_court', 15)
+#    trial_court.address.county = "Cook"
+#
+#  elif trial_court_index == -2:
+#    trial_court = court_list.as_court('trial_court', 52)
+#    trial_court.address.county = "Kane"
+#  
+#  else:
+#    trial_court = court_list.as_court('trial_court', trial_court_index)
 ---
 id: case number
 question: |
@@ -699,10 +702,11 @@ template: efiling_help
 subject: |
   **What if I need help sending my forms electronically?**
 content: |  
-  If you need help delivering by email or using the e-filing system, you can visit a [**Legal Self-Help Center**](https://www.illinoislegalaid.org/get-legal-help/lshc-directory) or you can call, chat, or text a Court Guide at [**Illinois Court Help**](https://www.ilcourthelp.gov) or 833-411-1121.
----
-# other party delivery method was here
+  If you need help delivering by email or using the e-filing system, you can visit a [**Legal Self-Help Center :external-link:**](https://www.illinoislegalaid.org/get-legal-help/lshc-directory). You can also contact Illinois Court Help:
 
+  * **[Visit the Illinois Court Help website :external-link:](https://www.ilcourthelp.gov/)**,
+  * <a href="tel:833-411-1121">**Call (833) 411-1121 :phone:**</a>, or
+  * <a href="sms:833-411-1121">**Text (833) 411-1121 :comment:**</a>.
 ---
 id: all party delivery method
 sets:
@@ -1025,7 +1029,7 @@ attachment:
   editable: False
   pdf template file: appearance.pdf
   fields:
-      - "trial_court_county": ${ trial_court.address.county }
+      - "trial_court_county": ${ case_county }
       - "plaintiffs": |
           % if in_re_check:
           ${ in_re_label }
@@ -1157,7 +1161,7 @@ attachment:
   editable: False
   pdf template file: additional_proof_of_delivery.pdf
   fields:
-      - "trial_court_county": ${ trial_court.address.county }
+      - "trial_court_county": ${ case_county }
       - "plaintiffs": |
           % if in_re_check:
           ${ in_re_label }
@@ -1264,7 +1268,7 @@ attachment:
   editable: False
   pdf template file: jury_request.pdf
   fields:
-      - "trial_court_county": ${ trial_court.address.county }
+      - "trial_court_county": ${ case_county }
       - "plaintiffs": |
           % if in_re_check:
           ${ in_re_label }
@@ -1412,13 +1416,14 @@ review:
     button: |
       **In re:** ${in_re_label}
     show if: in_re_check
-  - Edit: 
-      - trial_court_index
-      - recompute:
-        - trial_court
+#  - Edit: 
+#      - trial_court_index
+#      - recompute:
+#        - trial_court
+  - Edit: case_county
     button: |
       **County where this case is filed:**
-      ${ trial_court.address.county }
+      ${ case_county }
   - Edit: case_number
     button: |
       **Case number:**
@@ -1664,13 +1669,14 @@ review:
     button: |
       **In re:** ${in_re_label}
     show if: in_re_check
-  - Edit: 
-      - trial_court_index
-      - recompute:
-        - trial_court
+#  - Edit: 
+#      - trial_court_index
+#      - recompute:
+#        - trial_court
+  - Edit: case_county
     button: |
       **County where this case is filed:**
-      ${ trial_court.address.county }
+      ${ case_county }
   - Edit: case_number
     button: |
       **Case number:**
